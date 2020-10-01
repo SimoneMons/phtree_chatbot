@@ -13,7 +13,7 @@ import json
 with open('intents.json') as file:
     data = json.load(file)
 
-print(data)
+#print(data)
 
 words = []
 labels = []
@@ -30,6 +30,7 @@ for intent in data['intents']:
     if intent['tag'] not in labels:
         labels.append(intent['tag'])
 
+# important
 words = [stemmer.stem(w.lower()) for w in words if w != "?"]
 words = sorted(list(set(words)))
 
@@ -37,7 +38,7 @@ labels = sorted(labels)
 
 print('words: ', words)
 
-print('labels: ', labels)
+#print('labels: ', labels)
 
 print('docx:', docs_x)
 
@@ -46,16 +47,21 @@ print('docy', docs_y)
 training = []
 output = []
 
-out_empty = [0 for _ in range(len(labels))]
+out_empty = [0 for a in range(len(labels))]
+
+#print(out_empty)
+
+print(enumerate(docs_x))
 
 for x, doc in enumerate(docs_x):
     bag = []
-
+    #print('x: ', x)
+    #print('doc: ', doc)
     wrds = [stemmer.stem(w.lower()) for w in doc]
 
-    print(wrds)
-
     for w in words:
+        print('w:', w)
+        print('wrds: ', wrds)
         if w in wrds:
             bag.append(1)
         else:
@@ -67,6 +73,9 @@ for x, doc in enumerate(docs_x):
     training.append(bag)
     output.append(output_row)
 
-print(training)
+#training = numpy.array(training)
+#output = numpy.array(output)
 
-print(output)
+#print('training: ', training)
+
+#print('output: ', output)
