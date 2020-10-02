@@ -4,8 +4,8 @@ from nltk.stem.lancaster import LancasterStemmer
 stemmer = LancasterStemmer()
 
 import numpy
-#import tflearn
-#import tensorflow
+import tflearn
+import tensorflow
 import random
 
 import json
@@ -73,9 +73,23 @@ for x, doc in enumerate(docs_x):
     training.append(bag)
     output.append(output_row)
 
-#training = numpy.array(training)
-#output = numpy.array(output)
+training = numpy.array(training)
+output = numpy.array(output)
 
-#print('training: ', training)
+print('training: ', training)
 
-#print('output: ', output)
+print('output: ', output)
+
+#model
+tensorflow.reset_default_graph()
+
+net = tflearn.input_data(shape=[None, len(training[0])])
+net = tflearn.fully_connected(net, 8)
+net = tflearn.fully_connected(net, 8)
+net = tflearn.fully_connected(net, len(output[0]), activation="softmax")
+net = tflearn.regression(net)
+
+model = tflearn.DNN(net)
+
+
+

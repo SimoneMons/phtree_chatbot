@@ -1,0 +1,16 @@
+first unistall tensorflow
+
+pip uninstall tensorflow
+then install 1.13.2 version
+
+pip install tensorflow==1.13.2
+it works.. had the same issue.. but installing tensorflow 1.13.2 solved it!
+the newer version of tensorflow doesn't have
+
+
+https://techwithtim.net/tutorials/python-neural-networks/
+
+https://machinelearningmastery.com/neural-networks-are-function-approximators/
+
+https://machinelearningmastery.com/tutorial-first-neural-network-python-keras/
+
