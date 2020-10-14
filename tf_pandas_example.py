@@ -21,81 +21,59 @@ y = dataframe.iloc[0:, 13:14] #target
 # Create Train and test data to fit the model
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=42)
 
-#val_dataframe = dataframe.sample(frac=0.2, random_state=1337)
-#train_dataframe = dataframe.drop(val_dataframe.index)
-
 '''
-print(
-    "Using %d samples for training and %d for validation"
-    % (len(train_dataframe), len(val_dataframe))
-)
-
-print(val_dataframe)
-'''
-
-print(X_train)
-
 X_train_model = X_train.to_numpy()
 y_train_model = y_train.to_numpy()
 
-#print(X_train_model)
-
 X_test_model = X_test.to_numpy()
-
-
+y_test_model = y_test.to_numpy()
+'''
 
 '''
-#print(y_train)
+# scale
+scaler = sk.MinMaxScaler(feature_range=(0, 250))
+scaler = scaler.fit(X)
+X_scaled = scaler.transform(X)
+# Checking reconstruction
+X_rec = scaler.inverse_transform(X_scaled)
+'''
 
-Yscaler = MinMaxScaler(feature_range=(0, 1))
-Yscaler.fit(y_train)
-scaled_y_train = Yscaler.transform(y_train)
-#print(scaled_y_train)
-scaled_y_train = scaled_y_train.reshape(-1) # remove the second dimention from y so the shape changes from (n,1) to (n,)
-
-
-
+# scale X_train
 Xscaler = MinMaxScaler(feature_range=(0, 1)) # scale so that all the X data will range from 0 to 1
 Xscaler.fit(X_train)
 scaled_X_train = Xscaler.transform(X_train)
-
-scaled_y_train = np.insert(scaled_y_train, 0, 0)
-scaled_y_train = np.delete(scaled_y_train, -1)
 print(scaled_X_train)
-print(scaled_y_train)
 
-features = ['age', 'sex', 'cp', 'trestbps']
+# scale y_train
+Yscaler = MinMaxScaler(feature_range=(0, 1))
+Yscaler.fit(y_train)
+scaled_y_train = Yscaler.transform(y_train)
+print(scaled_y_train.shape)
+scaled_y_train = scaled_y_train.reshape(-1) # remove the second dimention from y so the shape changes from (n,1) to (n,)
+print(scaled_y_train.shape)
 
-x_training_dataset = (
-    tf.data.Dataset.from_tensor_slices(
-        (
-            tf.cast(X_train[features].values, tf.float32),
-        )
-    )
-)
+# scale X_test
+scaled_X_test = Xscaler.transform(X_test)
 
-print(x_training_dataset)
-'''
 
 # design the neural network model
 model = Sequential()
-model.add(Dense(9, input_dim=4, activation='relu', kernel_initializer='he_uniform'))
-model.add(Dense(9, activation='relu', kernel_initializer='he_uniform'))
+model.add(Dense(10, input_dim=4, activation='relu', kernel_initializer='he_uniform'))
+model.add(Dense(10, activation='relu', kernel_initializer='he_uniform'))
+
 model.add(Dense(1, activation='sigmoid'))
 
 # define the loss function and optimization algorithm
 model.compile(loss='mse', optimizer='adam')
 
 # ft the model on the training dataset
-model.fit(X_train_model, y_train_model, epochs=500, batch_size=10, verbose=0)
+model.fit(scaled_X_train, scaled_y_train, epochs=500, batch_size=10, verbose=0)
 
 
 
 # make predictions for the input data
-yhat = model.predict(X_test_model)
+y_pred_scaled = model.predict(scaled_X_test)
+#y_pred = Yscaler.inverse_transform(y_pred_scaled)
 
-print(yhat)
+print(y_pred_scaled, y_test)
 
-print(len(yhat))
-
-print(y_test)
