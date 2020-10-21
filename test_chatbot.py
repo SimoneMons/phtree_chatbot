@@ -1,95 +1,91 @@
-import nltk
-from nltk.stem.lancaster import LancasterStemmer
-
-stemmer = LancasterStemmer()
-
-import numpy
-import tflearn
-import tensorflow
+import pandas as pd
+import spacy
+from spacy.util import minibatch
 import random
 
-import json
 
-with open('intents.json') as file:
-    data = json.load(file)
+data = pd.read_csv('preguntas_chatboot.csv', sep=';')
 
-#print(data)
+#print(data['text'])
 
-words = []
-labels = []
-docs_x = []
-docs_y = []
+nlp = spacy.blank("es")  # create blank Language class
 
-for intent in data['intents']:
-    for pattern in intent['patterns']:
-        wrds = nltk.word_tokenize(pattern)
-        words.extend(wrds)
-        docs_x.append(wrds)
-        docs_y.append(intent["tag"])
+'''
+nlp = spacy.load("es_core_news_md")
 
-    if intent['tag'] not in labels:
-        labels.append(intent['tag'])
-
-# important
-words = [stemmer.stem(w.lower()) for w in words if w != "?"]
-words = sorted(list(set(words)))
-
-labels = sorted(labels)
-
-print('words: ', words)
-
-#print('labels: ', labels)
-
-print('docx:', docs_x)
-
-print('docy', docs_y)
-
-training = []
-output = []
-
-out_empty = [0 for a in range(len(labels))]
-
-#print(out_empty)
-
-print(enumerate(docs_x))
-
-for x, doc in enumerate(docs_x):
-    bag = []
-    #print('x: ', x)
-    #print('doc: ', doc)
-    wrds = [stemmer.stem(w.lower()) for w in doc]
-
-    for w in words:
-        print('w:', w)
-        print('wrds: ', wrds)
-        if w in wrds:
-            bag.append(1)
-        else:
-            bag.append(0)
-
-    output_row = out_empty[:]
-    output_row[labels.index(docs_y[x])] = 1
-
-    training.append(bag)
-    output.append(output_row)
-
-training = numpy.array(training)
-output = numpy.array(output)
-
-print('training: ', training)
-
-print('output: ', output)
-
-#model
-tensorflow.reset_default_graph()
-
-net = tflearn.input_data(shape=[None, len(training[0])])
-net = tflearn.fully_connected(net, 8)
-net = tflearn.fully_connected(net, 8)
-net = tflearn.fully_connected(net, len(output[0]), activation="softmax")
-net = tflearn.regression(net)
-
-model = tflearn.DNN(net)
+text = "hoy llueve mucho en Madrid"
 
 
+doc = nlp(text)
+
+for token in doc:
+    print(token.text, token.i, token.lemma_, token.tag_, token.pos_, token.dep_, token.head.text,  token.head.pos_)
+'''
+
+# Create the TextCategorizer with exclusive classes and "bow" architecture
+textcat = nlp.create_pipe(
+              "textcat",
+              config={
+                "exclusive_classes": True,
+                "architecture": "bow"})
+
+# Add the TextCategorizer to the empty model
+nlp.add_pipe(textcat)
+
+textcat.add_label("goodbye")
+textcat.add_label("thanks")
+textcat.add_label("greet")
+textcat.add_label("confirm")
+textcat.add_label("negation")
+textcat.add_label("get_full_debt")
+textcat.add_label("get_debt")
+textcat.add_label("get_plate")
+textcat.add_label("payment")
+textcat.add_label("deadlines")
+
+train_texts = data['text'].values
+
+train_labels = [{'cats': {'goodbye': label == 'goodbye',
+                          'thanks': label == 'thanks',
+                          'greet': label == 'greet',
+                          'confirm': label == 'confirm',
+                          'negation': label == 'negation',
+                          'get_full_debt': label == 'get_full_debt',
+                          'get_debt': label == 'get_debt',
+                          'get_plate': label == 'get_plate',
+                          'payment': label == 'payment',
+                          'deadlines': label == 'deadlines'}}
+                for label in data['label']]
+
+train_data = list(zip(train_texts, train_labels))
+
+random.seed(1)
+spacy.util.fix_random_seed(1)
+optimizer = nlp.begin_training()
+
+losses = {}
+for epoch in range(10):
+    random.shuffle(train_data)
+    # Create the batch generator with batch size = 8
+    batches = minibatch(train_data, size=8)
+    # Iterate through minibatches
+    for batch in batches:
+        # Each batch is a list of (text, label) but we need to
+        # send separate lists for texts and labels to update().
+        # This is a quick way to split a list of tuples into lists
+        texts, labels = zip(*batch)
+        nlp.update(texts, labels, sgd=optimizer, losses=losses)
+    print(losses)
+
+
+texts = ["Hola, cuanto debo a la concesión?",
+         ""]
+docs = [nlp.tokenizer(text) for text in texts]
+
+textcat = nlp.get_pipe('textcat')
+scores, _ = textcat.predict(docs)
+
+predicted_labels = scores.argmax(axis=1)
+
+print([textcat.labels[label] for label in predicted_labels])
 

@@ -1,0 +1,49 @@
+﻿label;text
+goodbye;Adiós
+goodbye;Hasta luego
+goodbye;Nos vemos
+goodbye;Bye
+thanks;Gracias
+thanks;Muchas gracias
+thanks;Gracias por la ayuda
+greet;Hola
+greet;buenos dias
+greet;que tal?
+greet;buenas tardes
+greet;Buenas
+confirm;Sí
+confirm;Sí, quiero saber la deuda de mi matricula
+confirm;Sí, claro
+negation;No
+negation;No tengo más dudas
+negation;No, gracias
+negation;Eso es todo
+get_full_debt;Quiero saber la deuda para la matricula [1234-HRB](car_plate)
+get_full_debt;qué deuda tiene la matrícula [8492-APF](car_plate)?
+get_full_debt;Cuanto debo si mi matricula es [7690 zrt](car_plate)
+get_full_debt;Mi matrícula es [6792-QYR](car_plate), ¿cuánto dinero debo?
+get_full_debt;Me gustaría saber la deuda para la matricula [1209cw](car_plate)
+get_full_debt;Quiero saber la deuda para la matricula [cr95po](car_plate)
+get_debt;quiero saber mi deuda
+get_debt;cuál es mi deuda?
+get_debt;cuánto debo?
+get_debt;deuda
+get_debt;debo?
+get_debt;Me gustaría saber la deuda para mi matricula
+get_debt;Hola! quiero saber la deuda para mi matricula
+get_debt;Quiero saber la deuda para mi matricula
+get_plate;Mi matricula es [9101-GHI](car_plate)
+get_plate;la matricula es [1357-JKA](car_plate)
+get_plate;la matricula es [1238 JKA](car_plate)
+get_plate;[1940-HYC](car_plate) es mi matricula
+payment;¿Cuáles son los métodos de pago? 
+payment;¿Como puedo pagar?
+payment;¿Qué tarjetas puedo usar?
+payment;¿Cuáles son las opciones de pago?
+payment;¿Con qué métodos puedo pagar?
+payment;¿Puedo pagar con tarjeta?
+deadlines;¿Puedo pagar a plazos? 
+deadlines;¿Se puede pagar a plazos?
+deadlines;¿Existe la opción de pagar a plazos?
+deadlines;¿Podría fraccionar el pago?
+deadlines;¿Se puede fraccionar el pago?

@@ -24,7 +24,7 @@ class MainWindow(QtWidgets.QMainWindow):
         text = self.input_le.text()
         if text:
             # response
-            res = 'Holaaaaaaaaaaa'
+            res = 'Holaaaaaaaaaaa Busti'
             self.output_te.append("[me]: {}".format(text))
             self.output_te.append("[bot]: {}".format(res))
             self.input_le.clear()
